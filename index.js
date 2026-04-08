@@ -1,47 +1,44 @@
-const { Client, IntentsBitField, Collection } = require('discord.js');
-require('dotenv').config();
+// Weather Dashboard Command for Turkish Cities
 
-const client = new Client({
-  intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.MessageContent,
-  ],
-});
+const weatherData = {
+    Istanbul: {
+        temperature: 20,
+        humidity: 65,
+        windSpeed: 10,
+        description: 'Sunny ☀️'
+    },
+    Ankara: {
+        temperature: 18,
+        humidity: 55,
+        windSpeed: 5,
+        description: 'Cloudy ☁️'
+    },
+    Izmir: {
+        temperature: 22,
+        humidity: 60,
+        windSpeed: 7,
+        description: 'Partly Cloudy 🌤️'
+    },
+    Antalya: {
+        temperature: 25,
+        humidity: 70,
+        windSpeed: 6,
+        description: 'Sunny ☀️'
+    }
+};
 
-client.commands = new Collection();
+const commands = {
+    '!hava': function (city) {
+        const data = weatherData[city];
+        if (!data) {
+            return `City not found! 🌍`;
+        }
+        return `Weather in ${city}:
+Temperature: ${data.temperature}°C
+Humidity: ${data.humidity}%
+Wind Speed: ${data.windSpeed} km/h
+Description: ${data.description}`;
+    }
+};
 
-// Ping Komutu
-client.on('messageCreate', message => {
-  if (message.author.bot) return;
-
-  if (message.content === '!ping') {
-    message.reply(`Pong! 🏓 ${client.ws.ping}ms`);
-  }
-
-  if (message.content === '!help') {
-    const helpEmbed = {
-      color: 0x0099ff,
-      title: 'Bot Komutları',
-      description: 'Mevcut komutlar:',
-      fields: [
-        {
-          name: '!ping',
-          value: 'Bot latency\'sini göster',
-        },
-        {
-          name: '!merhaba',
-          value: 'Bot sana selamını verir',
-        },
-      ],
-    };
-    message.reply({ embeds: [helpEmbed] });
-  }
-
-  if (message.content === '!merhaba') {
-    message.reply(`Merhaba ${message.author.username}! 👋`);
-  }
-});
-
-client.login(process.env.TOKEN);
+module.exports = commands;
